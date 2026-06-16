@@ -2,15 +2,15 @@
   "root": "plugin",
   "fileCount": 40,
   "totals": {
-    "words": 41923,
-    "tokens": 69256,
-    "cruftHits": 23
+    "words": 41752,
+    "tokens": 68850,
+    "cruftHits": 19
   },
   "alwaysOn": {
     "file": "skills/using-superpowers/SKILL.md",
-    "words": 789,
-    "tokens": 1302,
-    "cruftHits": 4
+    "words": 618,
+    "tokens": 896,
+    "cruftHits": 0
   },
   "lintIssueCount": 0,
   "lintIssues": [],
@@ -168,14 +168,6 @@
       "lint": []
     },
     {
-      "file": "skills/using-superpowers/SKILL.md",
-      "role": "always-on",
-      "words": 789,
-      "tokens": 1302,
-      "cruftHits": 4,
-      "lint": []
-    },
-    {
       "file": "skills/writing-skills/examples/CLAUDE_MD_TESTING.md",
       "role": "on-demand-ref",
       "words": 814,
@@ -228,6 +220,14 @@
       "role": "on-demand-skill",
       "words": 668,
       "tokens": 974,
+      "cruftHits": 0,
+      "lint": []
+    },
+    {
+      "file": "skills/using-superpowers/SKILL.md",
+      "role": "always-on",
+      "words": 618,
+      "tokens": 896,
       "cruftHits": 0,
       "lint": []
     },
