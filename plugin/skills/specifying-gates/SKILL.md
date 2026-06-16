@@ -1,6 +1,6 @@
 ---
 name: specifying-gates
-description: Use when a user-gate task has requiresUserSpecification=true OR the agent's "do I know HOW?" self-check returns no. Locks down verification mechanics through a short AskUserQuestion sequence and writes the answers back into the task's metadata. Does NOT run the verification itself.
+description: Use when a user-gate task has requiresUserSpecification=true, or the agent's do-I-know-HOW self-check returns no.
 ---
 
 # Specifying User-Thrown Gates
