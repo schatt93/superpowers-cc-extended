@@ -1,0 +1,337 @@
+{
+  "root": "plugin",
+  "fileCount": 40,
+  "totals": {
+    "chars": 296235,
+    "words": 41923,
+    "estTokens": 74061,
+    "cruftHits": 38
+  },
+  "alwaysOn": {
+    "file": "skills/using-superpowers/SKILL.md",
+    "words": 789,
+    "estTokens": 1357
+  },
+  "files": [
+    {
+      "file": "skills/writing-skills/anthropic-best-practices.md",
+      "isEntry": false,
+      "chars": 45678,
+      "words": 5764,
+      "estTokens": 11420,
+      "cruftHits": 0
+    },
+    {
+      "file": "skills/writing-skills/SKILL.md",
+      "isEntry": false,
+      "chars": 22588,
+      "words": 3213,
+      "estTokens": 5647,
+      "cruftHits": 1
+    },
+    {
+      "file": "skills/writing-plans/SKILL.md",
+      "isEntry": false,
+      "chars": 20933,
+      "words": 2973,
+      "estTokens": 5233,
+      "cruftHits": 0
+    },
+    {
+      "file": "skills/subagent-driven-development/SKILL.md",
+      "isEntry": false,
+      "chars": 13940,
+      "words": 1706,
+      "estTokens": 3485,
+      "cruftHits": 0
+    },
+    {
+      "file": "skills/writing-skills/testing-skills-with-subagents.md",
+      "isEntry": false,
+      "chars": 12544,
+      "words": 1923,
+      "estTokens": 3136,
+      "cruftHits": 0
+    },
+    {
+      "file": "skills/brainstorming/SKILL.md",
+      "isEntry": false,
+      "chars": 12054,
+      "words": 1733,
+      "estTokens": 3014,
+      "cruftHits": 0
+    },
+    {
+      "file": "skills/brainstorming/visual-companion.md",
+      "isEntry": false,
+      "chars": 11975,
+      "words": 1563,
+      "estTokens": 2994,
+      "cruftHits": 3
+    },
+    {
+      "file": "skills/systematic-debugging/SKILL.md",
+      "isEntry": false,
+      "chars": 9896,
+      "words": 1504,
+      "estTokens": 2474,
+      "cruftHits": 0
+    },
+    {
+      "file": "skills/test-driven-development/SKILL.md",
+      "isEntry": false,
+      "chars": 9857,
+      "words": 1496,
+      "estTokens": 2464,
+      "cruftHits": 0
+    },
+    {
+      "file": "skills/shared/task-format-reference.md",
+      "isEntry": false,
+      "chars": 9477,
+      "words": 1397,
+      "estTokens": 2369,
+      "cruftHits": 0
+    },
+    {
+      "file": "skills/test-driven-development/testing-anti-patterns.md",
+      "isEntry": false,
+      "chars": 8221,
+      "words": 1250,
+      "estTokens": 2055,
+      "cruftHits": 0
+    },
+    {
+      "file": "skills/using-git-worktrees/SKILL.md",
+      "isEntry": false,
+      "chars": 7977,
+      "words": 1210,
+      "estTokens": 1994,
+      "cruftHits": 0
+    },
+    {
+      "file": "skills/dispatching-parallel-agents/SKILL.md",
+      "isEntry": false,
+      "chars": 7509,
+      "words": 1057,
+      "estTokens": 1877,
+      "cruftHits": 0
+    },
+    {
+      "file": "skills/finishing-a-development-branch/SKILL.md",
+      "isEntry": false,
+      "chars": 7043,
+      "words": 1072,
+      "estTokens": 1761,
+      "cruftHits": 0
+    },
+    {
+      "file": "skills/specifying-gates/SKILL.md",
+      "isEntry": false,
+      "chars": 6863,
+      "words": 950,
+      "estTokens": 1716,
+      "cruftHits": 0
+    },
+    {
+      "file": "skills/receiving-code-review/SKILL.md",
+      "isEntry": false,
+      "chars": 6276,
+      "words": 929,
+      "estTokens": 1569,
+      "cruftHits": 0
+    },
+    {
+      "file": "skills/writing-skills/persuasion-principles.md",
+      "isEntry": false,
+      "chars": 5888,
+      "words": 854,
+      "estTokens": 1472,
+      "cruftHits": 0
+    },
+    {
+      "file": "skills/executing-plans/SKILL.md",
+      "isEntry": false,
+      "chars": 5724,
+      "words": 829,
+      "estTokens": 1431,
+      "cruftHits": 1
+    },
+    {
+      "file": "skills/using-superpowers/SKILL.md",
+      "isEntry": true,
+      "chars": 5429,
+      "words": 789,
+      "estTokens": 1357,
+      "cruftHits": 10
+    },
+    {
+      "file": "skills/writing-skills/examples/CLAUDE_MD_TESTING.md",
+      "isEntry": false,
+      "chars": 5423,
+      "words": 814,
+      "estTokens": 1356,
+      "cruftHits": 0
+    },
+    {
+      "file": "skills/systematic-debugging/root-cause-tracing.md",
+      "isEntry": false,
+      "chars": 5308,
+      "words": 739,
+      "estTokens": 1327,
+      "cruftHits": 0
+    },
+    {
+      "file": "skills/requesting-code-review/code-reviewer.md",
+      "isEntry": false,
+      "chars": 4792,
+      "words": 644,
+      "estTokens": 1198,
+      "cruftHits": 0
+    },
+    {
+      "file": "skills/subagent-driven-development/implementer-prompt.md",
+      "isEntry": false,
+      "chars": 4717,
+      "words": 683,
+      "estTokens": 1179,
+      "cruftHits": 0
+    },
+    {
+      "file": "skills/checking-gates/SKILL.md",
+      "isEntry": false,
+      "chars": 4516,
+      "words": 724,
+      "estTokens": 1129,
+      "cruftHits": 0
+    },
+    {
+      "file": "skills/using-superpowers/references/codex-tools.md",
+      "isEntry": true,
+      "chars": 4433,
+      "words": 608,
+      "estTokens": 1108,
+      "cruftHits": 9
+    },
+    {
+      "file": "skills/systematic-debugging/CREATION-LOG.md",
+      "isEntry": false,
+      "chars": 4233,
+      "words": 612,
+      "estTokens": 1058,
+      "cruftHits": 0
+    },
+    {
+      "file": "skills/verification-before-completion/SKILL.md",
+      "isEntry": false,
+      "chars": 4149,
+      "words": 668,
+      "estTokens": 1037,
+      "cruftHits": 0
+    },
+    {
+      "file": "skills/systematic-debugging/defense-in-depth.md",
+      "isEntry": false,
+      "chars": 3648,
+      "words": 494,
+      "estTokens": 912,
+      "cruftHits": 0
+    },
+    {
+      "file": "skills/systematic-debugging/condition-based-waiting.md",
+      "isEntry": false,
+      "chars": 3498,
+      "words": 498,
+      "estTokens": 875,
+      "cruftHits": 0
+    },
+    {
+      "file": "skills/using-superpowers/references/gemini-tools.md",
+      "isEntry": true,
+      "chars": 2930,
+      "words": 421,
+      "estTokens": 733,
+      "cruftHits": 9
+    },
+    {
+      "file": "skills/requesting-code-review/SKILL.md",
+      "isEntry": false,
+      "chars": 2806,
+      "words": 395,
+      "estTokens": 702,
+      "cruftHits": 0
+    },
+    {
+      "file": "skills/systematic-debugging/test-pressure-3.md",
+      "isEntry": false,
+      "chars": 2692,
+      "words": 430,
+      "estTokens": 673,
+      "cruftHits": 0
+    },
+    {
+      "file": "skills/systematic-debugging/test-pressure-2.md",
+      "isEntry": false,
+      "chars": 2283,
+      "words": 376,
+      "estTokens": 571,
+      "cruftHits": 0
+    },
+    {
+      "file": "skills/subagent-driven-development/spec-reviewer-prompt.md",
+      "isEntry": false,
+      "chars": 1995,
+      "words": 274,
+      "estTokens": 499,
+      "cruftHits": 0
+    },
+    {
+      "file": "skills/systematic-debugging/test-pressure-1.md",
+      "isEntry": false,
+      "chars": 1898,
+      "words": 306,
+      "estTokens": 475,
+      "cruftHits": 0
+    },
+    {
+      "file": "skills/using-superpowers/references/copilot-tools.md",
+      "isEntry": true,
+      "chars": 1855,
+      "words": 305,
+      "estTokens": 464,
+      "cruftHits": 5
+    },
+    {
+      "file": "skills/brainstorming/spec-document-reviewer-prompt.md",
+      "isEntry": false,
+      "chars": 1744,
+      "words": 236,
+      "estTokens": 436,
+      "cruftHits": 0
+    },
+    {
+      "file": "skills/writing-plans/plan-document-reviewer-prompt.md",
+      "isEntry": false,
+      "chars": 1712,
+      "words": 236,
+      "estTokens": 428,
+      "cruftHits": 0
+    },
+    {
+      "file": "skills/subagent-driven-development/code-quality-reviewer-prompt.md",
+      "isEntry": false,
+      "chars": 1078,
+      "words": 139,
+      "estTokens": 270,
+      "cruftHits": 0
+    },
+    {
+      "file": "skills/systematic-debugging/test-academic.md",
+      "isEntry": false,
+      "chars": 653,
+      "words": 109,
+      "estTokens": 163,
+      "cruftHits": 0
+    }
+  ]
+}
