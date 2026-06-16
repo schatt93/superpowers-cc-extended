@@ -49,7 +49,10 @@ function lint(text, rel, root) {
   // Balanced code fences.
   const fences = (text.match(/^```/gm) || []).length;
   if (fences % 2 !== 0) issues.push(`unbalanced code fences (${fences})`);
-  // Concrete file dependencies must resolve (references/*.md, shared/*.md, @./...md).
+  // File-dependency links must resolve. SCOPE (deliberate): references/*.md, shared/*.md, and
+  // @-includes — the concrete dependency types our edits can break. Plain prose ](*.md) links are
+  // intentionally NOT linted: doc files (e.g. anthropic-best-practices.md) contain illustrative link
+  // syntax that would false-positive. Adding a broad ](*.md) matcher flagged 14 such non-deps.
   const deps = new Set();
   for (const m of text.matchAll(/(?:@\.\/|\]\(|see\s+|`)?((?:\.\/)?(?:skills\/)?[\w./-]*(?:references|shared)\/[\w-]+\.md)/g)) deps.add(m[1]);
   for (const m of text.matchAll(/@(\.\/[\w./-]+\.md)/g)) deps.add(m[1]);
@@ -108,6 +111,7 @@ function measure(root, outName, force) {
 function diff(baseName, postName) {
   const b = JSON.parse(readFileSync(join(process.cwd(), "reports", `${baseName}.json`), "utf8"));
   const p = JSON.parse(readFileSync(join(process.cwd(), "reports", `${postName}.json`), "utf8"));
+  if (!b.alwaysOn || !p.alwaysOn) { console.error("diff: a report has alwaysOn=null (root lacks using-superpowers/SKILL.md)"); process.exit(1); }
   const pct = (was, now) => was ? (((was - now) / was) * 100) : 0;
 
   const aoWas = b.alwaysOn.tokens, aoNow = p.alwaysOn.tokens, aoPct = pct(aoWas, aoNow);

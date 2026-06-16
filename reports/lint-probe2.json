@@ -1,0 +1,50 @@
+{
+  "root": "C:/Users/SHUBHA~1.CHA/AppData/Local/Temp/tmp.o82hm4rcin",
+  "fileCount": 4,
+  "totals": {
+    "words": 60,
+    "tokens": 112,
+    "cruftHits": 0
+  },
+  "alwaysOn": null,
+  "lintIssueCount": 1,
+  "lintIssues": [
+    "skills/missingfm/SKILL.md: missing YAML frontmatter"
+  ],
+  "files": [
+    {
+      "file": "skills/fenceinquote/SKILL.md",
+      "role": "on-demand-skill",
+      "words": 29,
+      "tokens": 49,
+      "cruftHits": 0,
+      "lint": []
+    },
+    {
+      "file": "skills/tildefence/SKILL.md",
+      "role": "on-demand-skill",
+      "words": 17,
+      "tokens": 37,
+      "cruftHits": 0,
+      "lint": []
+    },
+    {
+      "file": "skills/notaskill/references/guide.md",
+      "role": "on-demand-ref",
+      "words": 7,
+      "tokens": 15,
+      "cruftHits": 0,
+      "lint": []
+    },
+    {
+      "file": "skills/missingfm/SKILL.md",
+      "role": "on-demand-skill",
+      "words": 7,
+      "tokens": 11,
+      "cruftHits": 0,
+      "lint": [
+        "missing YAML frontmatter"
+      ]
+    }
+  ]
+}

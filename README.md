@@ -11,9 +11,14 @@ per-conversation token cost without losing context. The live install is **untouc
 | 7 skill descriptions (skills registry) | 300 | 176 | **−124 (−41%)** |
 | **Total recurring saving / conversation** | | | **~530 tokens** |
 
-Structural lint: 0→0 regressions. Protected blocks (EXTREMELY-IMPORTANT gate, Red-Flags
-table, Instruction-Priority) byte-identical. Triggering behavior independently judged
-**preserved-and-improved**.
+Structural lint: 0→0 regressions. Verbatim-preserved blocks (EXTREMELY-IMPORTANT gate, Red-Flags
+table, Skill-Priority/Types, SUBAGENT-STOP) are byte-identical; Instruction-Priority is preserved
+but trimmed of non-Claude-Code filenames (GEMINI.md/AGENTS.md). Triggering behavior independently
+judged **preserved-and-improved**.
+
+> Counts are cl100k — a proxy whose **percentages are tokenizer-invariant** (absolute integers differ
+> on Claude). Recurring per-conversation saving = 406 (body) + 124 (descriptions) = **530 tok**; the
+> corpus total drops 535 tok (a near-coincidence, not the same quantity).
 
 ## What changed (and why the rest didn't)
 
@@ -38,11 +43,11 @@ Dropped as unsafe/ROI-negative: body-compressing the 15 on-demand skills, `share
   `node measure.mjs diff baseline <name>` (pass/fail vs pre-registered threshold).
 - `apply-cso.mjs` / `tokens-delta.mjs` — the CSO edit + its measurement.
 - `docs/2026-06-16-tier0-cso-optimization-design.md` — design & decision record.
-- `deploy.sh` — copy the 8 changed files into the live install (run deliberately; re-run after updates).
+- `deploy.sh` — deploy the 8 changed files into the live install. **Dry-run by default; pass `--apply`.** Backs up + only overwrites known-pristine files; auto-detects the active version.
 
 ## Deploy later (3 paths — not mutually exclusive)
 
-- **In-place:** `bash deploy.sh` → savings live next `/clear`. Wiped by `/plugin update`; just re-run.
+- **In-place:** `bash deploy.sh` (dry-run) then `bash deploy.sh --apply` → savings live next `/clear`. Wiped by `/plugin update`; just re-run.
 - **Fork:** push `plugin/` to a fork of pcvelz/superpowers, re-point the marketplace install.
 - **Upstream PR:** contribute to pcvelz/superpowers; you get it back via normal updates once merged.
 

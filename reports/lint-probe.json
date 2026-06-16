@@ -1,0 +1,65 @@
+{
+  "root": "C:/Users/SHUBHA~1.CHA/AppData/Local/Temp/tmp.uHbxFV9RdJ",
+  "fileCount": 5,
+  "totals": {
+    "words": 64,
+    "tokens": 123,
+    "cruftHits": 0
+  },
+  "alwaysOn": null,
+  "lintIssueCount": 4,
+  "lintIssues": [
+    "skills/danglinglink/SKILL.md: broken link: references/missing-file.md",
+    "skills/danglinglink/SKILL.md: broken link: references/another-missing.md",
+    "skills/danglinglink/SKILL.md: broken link: ./references/another-missing.md",
+    "skills/brokenfence/SKILL.md: unbalanced code fences (1)"
+  ],
+  "files": [
+    {
+      "file": "skills/danglinglink/SKILL.md",
+      "role": "on-demand-skill",
+      "words": 16,
+      "tokens": 38,
+      "cruftHits": 0,
+      "lint": [
+        "broken link: references/missing-file.md",
+        "broken link: references/another-missing.md",
+        "broken link: ./references/another-missing.md"
+      ]
+    },
+    {
+      "file": "skills/goodskill/SKILL.md",
+      "role": "on-demand-skill",
+      "words": 17,
+      "tokens": 29,
+      "cruftHits": 0,
+      "lint": []
+    },
+    {
+      "file": "skills/brokenfence/SKILL.md",
+      "role": "on-demand-skill",
+      "words": 16,
+      "tokens": 27,
+      "cruftHits": 0,
+      "lint": [
+        "unbalanced code fences (1)"
+      ]
+    },
+    {
+      "file": "skills/brokenyaml/SKILL.md",
+      "role": "on-demand-skill",
+      "words": 14,
+      "tokens": 27,
+      "cruftHits": 0,
+      "lint": []
+    },
+    {
+      "file": "skills/danglinglink/references/exists.md",
+      "role": "on-demand-ref",
+      "words": 1,
+      "tokens": 2,
+      "cruftHits": 0,
+      "lint": []
+    }
+  ]
+}

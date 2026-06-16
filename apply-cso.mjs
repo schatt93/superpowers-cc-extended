@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 // CSO sweep: replace workflow-summarizing descriptions with trigger-only ones.
 // Per writing-skills doctrine: description = WHEN to use, third person, NO workflow summary.
-// Only the 7 skills carrying the anti-pattern are touched; the other 9 are already clean.
+// Covers the 7 skills + 3 command wrappers that carried the anti-pattern; others already clean.
+// Idempotent: re-running makes no change once applied.
 import { readFileSync, writeFileSync } from "node:fs";
 
-const edits = {
+const skillEdits = {
   "brainstorming":
     "Use before any creative work — creating features, building components, adding functionality, or modifying behavior — when requirements or design are not yet nailed down.",
   "checking-gates":
@@ -21,13 +22,32 @@ const edits = {
     "Use when about to claim work is complete, fixed, or passing — before committing, creating PRs, or otherwise reporting success.",
 };
 
-let changed = 0;
-for (const [skill, desc] of Object.entries(edits)) {
-  const path = `plugin/skills/${skill}/SKILL.md`;
-  const t = readFileSync(path, "utf8");
-  if (!/^description:.*$/m.test(t)) { console.error(`! ${skill}: no description line`); process.exit(1); }
-  const next = t.replace(/^description:.*$/m, `description: ${desc}`);
-  if (next !== t) { writeFileSync(path, next); changed++; console.log(`updated ${skill}`); }
-  else console.log(`unchanged ${skill}`);
+// Command wrappers whose descriptions carried the same anti-pattern (also in the always-on registry).
+const commandEdits = {
+  "brainstorm":
+    "Use before any creative work — creating features, building components, adding functionality, or modifying behavior — when requirements or design are not yet nailed down.",
+  "specify-gate":
+    "Use when a user-gate task has requiresUserSpecification=true, or the do-I-know-HOW self-check returns no. Dormant unless the user-gate hook is registered.",
+  "gate-check":
+    "Use when picking up a user-gate task, or when a hook demands re-validation of a gate task. Dormant unless the user-gate opt-in hook is registered.",
+};
+
+// YAML-safe scalar: quote only when a plain scalar would be ambiguous/invalid (future-proofing).
+const needsQuote = (s) => s === "" || /: | #|^[\s!&*?|>@`"'%,\[\]{}#-]|\s$/.test(s);
+const yamlScalar = (s) => (needsQuote(s) ? JSON.stringify(s) : s);
+
+function applyMap(map, tmpl, label) {
+  let changed = 0;
+  for (const [key, desc] of Object.entries(map)) {
+    const path = tmpl(key);
+    const t = readFileSync(path, "utf8");
+    if (!/^description:.*$/m.test(t)) { console.error(`! ${label} ${key}: no description line`); process.exit(1); }
+    const next = t.replace(/^description:.*$/m, `description: ${yamlScalar(desc)}`);
+    if (next !== t) { writeFileSync(path, next); changed++; console.log(`updated ${label} ${key}`); }
+  }
+  return changed;
 }
-console.log(`\n${changed}/${Object.keys(edits).length} descriptions rewritten`);
+
+const s = applyMap(skillEdits, (k) => `plugin/skills/${k}/SKILL.md`, "skill");
+const c = applyMap(commandEdits, (k) => `plugin/commands/${k}.md`, "command");
+console.log(`\n${s} skills + ${c} commands rewritten`);

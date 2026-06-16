@@ -1,3 +1,5 @@
 node_modules/
-reports/post.json
+reports/post*.json
 reports/current.json
+reports/fresh.json
+backups/

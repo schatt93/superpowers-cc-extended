@@ -38,7 +38,7 @@ discipline prose.
 
 - Always-on real-token reduction **≥ 30%** (1,302 → ≤ 911).
 - Structural-lint regressions **≤ 0** (baseline = 0 issues).
-- Every protected block byte-identical post-edit (grep gate).
+- Every preserved-verbatim block byte-identical (gate); Instruction-Priority kept but trimmed of non-CC filenames (GEMINI.md/AGENTS.md).
 - Triggering spot-check: optimized `using-superpowers` still drives skill-check-before-acting.
 
 ## Safety / deploy

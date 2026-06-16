@@ -9,7 +9,7 @@ const desc = (text) => (text.match(/^description:\s*(.*)$/m) || [,""])[1];
 let o = 0, n = 0;
 for (const s of skills) {
   const path = `plugin/skills/${s}/SKILL.md`;
-  const oldText = execFileSync("git", ["show", `HEAD:${path}`], { encoding: "utf8" }); // pre-CSO (committed); no shell
+  const oldText = execFileSync("git", ["show", `f647c54:${path}`], { encoding: "utf8" }); // pristine baseline (pre-CSO); no shell
   const newText = readFileSync(path, "utf8");                              // post-CSO (working)
   o += encode(desc(oldText)).length;
   n += encode(desc(newText)).length;
