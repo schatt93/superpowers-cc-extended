@@ -21,6 +21,16 @@ Dispatch a code reviewer subagent to catch issues before they cascade. The revie
 - Before refactoring (baseline check)
 - After fixing complex bug
 
+## Review dimensions
+
+Direct the reviewer to check, at minimum:
+- **Five-path coverage** (superpowers-extended-cc:writing-tests) — Happy / Bad / Bumpy / Chaos / Death; no stubs or tautologies.
+- **Security** — STRIDE threats on changed surfaces; SAST/SCA clean; no secrets in code or logs.
+- **Correctness & convention** — matches existing patterns; errors typed and handled.
+
+For a multi-perspective red-team of a *design or finished product* (not a diff), use
+superpowers-extended-cc:adversarial-audit instead.
+
 ## How to Request
 
 **1. Get git SHAs:**

@@ -28,6 +28,13 @@ Write the test first. Watch it fail. Write minimal code to pass.
 
 Thinking "skip TDD just this once"? Stop. That's rationalization.
 
+## What to test (not just when)
+
+TDD sets the *order* (test first). For *what* a thorough test must cover, use
+**superpowers-extended-cc:writing-tests** — the five operational paths (Happy / Bad / Bumpy /
+Chaos / Death), no stubs, no tautologies. A green suite that survives mutation of critical logic
+(auth, money, access control) is superficial — a surviving mutant there is a blocking defect.
+
 ## The Iron Law
 
 ```
