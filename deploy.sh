@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
-# Apply the validated optimization to the LIVE plugin install.
+# Apply the validated optimization to the LIVE plugin install:
+#   - 8 MODIFIED files (Tier-0 + CSO) — overwritten only if they match known-pristine
+#   - 3 NEW skills (writing-tests, adversarial-audit, e2e-testing) — created if absent
 #
 # SAFE BY DEFAULT: this is a DRY-RUN unless you pass --apply. (An earlier version
 # deployed on an empty arg — that footgun is fixed; nothing writes without --apply.)
@@ -76,6 +78,31 @@ for f in "${files[@]}"; do
     echo "  would deploy $f"
   fi
   applied=$((applied+1))
+done
+
+# --- new skills (whole directories absent from upstream): create-if-absent ---
+newskills=( writing-tests adversarial-audit e2e-testing )
+for sk in "${newskills[@]}"; do
+  while IFS= read -r rel; do
+    [ -z "$rel" ] && continue
+    f="${rel#plugin/}"                       # skills/<sk>/...
+    tgt="$CACHE/$f"
+    if [ -f "$tgt" ] && git -C "$SRCROOT" show "HEAD:$rel" | diff -q - "$tgt" >/dev/null 2>&1; then
+      echo "  skip  already present: $f"; skipped=$((skipped+1)); continue
+    fi
+    if [ -f "$tgt" ] && [ $FORCE -eq 0 ]; then
+      echo "  WARN  unexpected existing file (not from this workspace): $f — skip (use --force)"; warned=$((warned+1)); continue
+    fi
+    if [ $APPLY -eq 1 ]; then
+      [ -f "$tgt" ] && { mkdir -p "$BACKUP/$(dirname "$f")"; cp "$tgt" "$BACKUP/$f"; }
+      mkdir -p "$(dirname "$tgt")"
+      git -C "$SRCROOT" show "HEAD:$rel" > "$tgt"
+      echo "  ADDED $f"
+    else
+      echo "  would add $f"
+    fi
+    applied=$((applied+1))
+  done < <(git -C "$SRCROOT" ls-tree -r --name-only HEAD "plugin/skills/$sk")
 done
 
 echo ""

@@ -57,7 +57,7 @@ Dropped as unsafe/ROI-negative: body-compressing the 15 on-demand skills, `share
   `node measure.mjs diff baseline <name>` (pass/fail vs pre-registered threshold).
 - `apply-cso.mjs` / `tokens-delta.mjs` — the CSO edit + its measurement.
 - `docs/2026-06-16-tier0-cso-optimization-design.md` — design & decision record.
-- `deploy.sh` — deploy the 8 changed files into the live install. **Dry-run by default; pass `--apply`.** Backs up + only overwrites known-pristine files; auto-detects the active version.
+- `deploy.sh` — deploy the 8 changed files **+ 3 new skills** into the live install. **Dry-run by default; pass `--apply`.** Backs up + only overwrites known-pristine files; creates new skills if absent; auto-detects the active version.
 
 ## Deploy later (3 paths — not mutually exclusive)
 
