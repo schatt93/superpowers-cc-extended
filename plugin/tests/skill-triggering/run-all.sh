@@ -14,13 +14,15 @@ SKILLS=(
     "dispatching-parallel-agents"
     "executing-plans"
     "requesting-code-review"
-    # New capability skills (this fork). The *-standards and concise-output skills are
-    # contextual/support skills (they fire during planning/output, not as a first response),
-    # so they are exercised via cross-references + structural lint rather than naive triggering.
+    # New skills (this fork). concise-output is an output-discipline meta-skill with no
+    # first-response trigger, so it is exercised via structural lint + cross-references, not here.
     "writing-tests"
     "e2e-testing"
     "adversarial-audit"
     "orchestration-routing"
+    "architecture-standards"
+    "delivery-standards"
+    "compliance-standards"
 )
 
 echo "=== Running Skill Triggering Tests ==="

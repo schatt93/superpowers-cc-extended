@@ -1,0 +1,1 @@
+Our service is already built and tested; we're now planning the production rollout. I need to settle the deployment topology and progressive-delivery approach, service-to-service token auth, and our RTO/RPO disaster-recovery tiers. What delivery and release standards apply?

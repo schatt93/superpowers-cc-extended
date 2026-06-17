@@ -1,0 +1,1 @@
+I'm wiring the compliance and supply-chain controls into our existing CI/CD pipeline — policy-as-code enforcement gates, SBOM generation, and container image signing with admission control. How should I set these up to meet our standards?

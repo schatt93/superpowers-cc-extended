@@ -1,0 +1,1 @@
+The requirements for our new order-management backend are already locked. Now I need to settle the service architecture itself — the ports-and-adapters layering, how services handle distributed transactions across the order and payment services, and the ingress/routing tier. What architecture standards should I follow here?
