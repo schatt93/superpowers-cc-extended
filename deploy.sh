@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Apply the validated optimization to the LIVE plugin install.
 #
-# Auto-discovers EVERY skill file changed since the pristine baseline (no hardcoded list to go stale):
+# Auto-discovers EVERY skill/agent file changed since the pristine baseline (no hardcoded list to go stale):
 #   - existed at baseline -> overwrite ONLY if the target still matches pristine (never clobber upstream)
 #   - new since baseline  -> create if absent
 #
@@ -73,7 +73,7 @@ while IFS= read -r rel; do
     echo "  would $kind $f"
   fi
   applied=$((applied+1))
-done < <(git -C "$SRCROOT" diff --name-only "$BASELINE_REF" HEAD -- plugin/skills)
+done < <(git -C "$SRCROOT" diff --name-only "$BASELINE_REF" HEAD -- plugin/skills plugin/agents)
 
 echo ""
 echo "Summary: $([ $APPLY -eq 1 ] && echo applied || echo would-apply)=$applied  skipped=$skipped  warned=$warned"

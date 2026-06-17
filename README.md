@@ -30,10 +30,14 @@ Four new on-demand skills + Tier-1 pointers, all validated (subagent RED→GREEN
 | `adversarial-audit` | Parallel red-team of a design/claim/product on non-overlapping, evidence-required attack lenses |
 | `e2e-testing` | Full-journey tests across real boundaries; five paths at system scale + load/soak/chaos + device matrix |
 | `concise-output` | Output-token discipline: results-first, structured-over-prose, capped/shaped subagent returns (~5x input price) |
+| `orchestration-routing` | Smart dispatch: pick execution shape (inline / agent / parallel / **Workflow**) + compute tier (model+effort) per task; routes to `sp-mechanical`/`sp-standard`/`sp-deep` agents |
 
 Tier-1 edits point `test-driven-development`, `verification-before-completion`, and `requesting-code-review` at these.
 
-**Always-on ledger:** Tier-0 + CSO = −530 tok; +195 tok for the 4 new descriptions = **net −335 tok/conversation**. New skill bodies are on-demand only. **Output side:** `concise-output` cuts *generated* tokens — subagent-validated ~65% on a sample task, substance intact.
+**Always-on ledger:** Tier-0 + CSO −530; +195 (4 testing/output skill descriptions) +165 (orchestration-routing + 3 tier-agent descriptions) = **net −170 tok/conversation**. Bodies are on-demand only.
+
+- **Output side:** `concise-output` — subagent-validated ~65% terser returns, substance intact.
+- **Smart dispatch:** `orchestration-routing` + `sp-mechanical`/`sp-standard`/`sp-deep` agents auto-route **model + effort + execution shape** (Workflow when warranted). Main-loop thinking/effort stays **user-only** — the skill advises `/effort`, it cannot auto-set it (hooks get it read-only). `effort:` frontmatter is doc-confirmed; live-verified on deploy.
 
 ## What changed (and why the rest didn't)
 
