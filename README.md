@@ -24,7 +24,7 @@ Or in a session:
 
 **1. Leaner always-on context.** Only one file is injected into *every* conversation (`using-superpowers`, via the SessionStart hook). It was rewritten **−31.2%** (1302→896 tok — cut Claude-Code-irrelevant multi-platform sections, flowchart→list) and 7 registry descriptions were tightened (−124 tok), with **zero loss of Claude-Code behavior** (independently, adversarially audited: only non-CC platform text was dropped — every Red-Flags row, the rationalization block, and the skill-priority rules are byte-preserved, and inherited skill bodies change only by *appended* cross-references, never deletions). This release also *adds* the 8 new skills' + 3 agents' descriptions to the always-on registry (+491 tok), so the **net always-on change is −39 tok** — a smaller always-on footprint *while* shipping 11 new capabilities.
 
-**2. New capabilities** (each skill *body* is on-demand — zero cost until invoked; their descriptions are the registry cost already counted in the −39 net above). Each is authored to the `writing-skills` doctrine and **structurally validated** (lint-clean, balanced fences, resolvable links, trigger-only descriptions); behavioral RED→GREEN triggering evals are not yet in the automated suite:
+**2. New capabilities** (each skill *body* is on-demand — zero cost until invoked; their descriptions are the registry cost already counted in the −39 net above). Each is authored to the `writing-skills` doctrine and **validated**: all are structurally checked (lint-clean, balanced fences, resolvable links, trigger-only descriptions), and the four capability skills (`writing-tests`, `e2e-testing`, `adversarial-audit`, `orchestration-routing`) also pass live triggering tests (`plugin/tests/skill-triggering`). The `*-standards` and `concise-output` skills are contextual/support skills, exercised via cross-references rather than first-response triggering:
 
 | Skill | What it does |
 |---|---|
@@ -37,7 +37,7 @@ Or in a session:
 | `delivery-standards` | Org delivery/ops: blue-green/canary, OAuth2.1 token-exchange, RTO/RPO tiers, split-brain |
 | `compliance-standards` | Org compliance/supply-chain: OPA policy-as-code, SBOM, Cosign signing + admission control |
 
-**3. Auto model + effort routing.** Three tier agents — `sp-mechanical` (haiku/low), `sp-standard` (sonnet/medium), `sp-deep` (opus/high) — let `orchestration-routing` send each delegated task to the cheapest model+effort that can do it. (Main-loop thinking/effort stays user-controlled; the skill *advises*, it can't auto-set it.)
+**3. Model + effort routing.** Three tier agents — `sp-mechanical` (haiku), `sp-standard` (sonnet), `sp-deep` (opus) — let `orchestration-routing` send each delegated task to the cheapest tier that can do it. The agent's **model** is baked into its frontmatter; **effort** is the tier's intended reasoning level, passed at dispatch (advisory — Claude Code doesn't read an `effort:` field from an agent file). Main-loop thinking/effort stays user-controlled; the skill *advises*, it can't auto-set it.
 
 ## Full skill set
 

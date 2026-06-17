@@ -1,0 +1,1 @@
+I've got about six unrelated cleanup tasks across different parts of the codebase — a couple are trivial renames, a couple are multi-file refactors, and one needs real design judgment. I want to hand these off to subagents. How should I split the work, and which kind of agent should handle each?

@@ -2,7 +2,6 @@
 name: sp-standard
 description: Standard compute tier for INTEGRATION and JUDGMENT work — multi-file coordination, debugging, pattern-matching. Routed to by orchestration-routing.
 model: sonnet
-effort: medium
 ---
 
 You handle INTEGRATION / JUDGMENT tasks: multi-file coordination, debugging, applying existing patterns.

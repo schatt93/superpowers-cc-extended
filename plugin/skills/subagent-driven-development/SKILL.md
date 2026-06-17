@@ -103,7 +103,7 @@ Use the least powerful model that can handle each role to conserve cost and incr
 
 **Architecture, design, and review tasks**: use the most capable available model.
 
-For automatic model+effort routing, dispatch the tiered agents (superpowers-extended-cc:orchestration-routing): `sp-mechanical` (haiku/low), `sp-standard` (sonnet/medium), `sp-deep` (opus/high). orchestration-routing also picks the execution *shape* (inline / parallel / Workflow).
+For model + effort routing, dispatch the tiered agents (superpowers-extended-cc:orchestration-routing): `sp-mechanical` (haiku), `sp-standard` (sonnet), `sp-deep` (opus) — each agent's model is set in its frontmatter; effort is advisory, passed at dispatch. orchestration-routing also picks the execution *shape* (inline / parallel / Workflow).
 
 **Task complexity signals:**
 - Touches 1-2 files with a complete spec → cheap model

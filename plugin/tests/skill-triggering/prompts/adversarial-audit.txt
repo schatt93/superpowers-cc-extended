@@ -1,0 +1,1 @@
+I've finished building this feature and I'm about to ship it. Before I do, I want to rigorously stress-test the design and my assumptions from several independent angles to surface anything that's actually broken — not just a quick once-over. How should I go about that?

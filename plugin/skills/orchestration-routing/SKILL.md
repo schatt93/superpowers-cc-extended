@@ -24,7 +24,7 @@ Match execution shape and compute to the task. Over-provisioning burns tokens; u
 
 ## 2. Pick the compute TIER (model + effort)
 
-Use the **least** tier that can do the job. Route via `subagent_type`; each tier agent has model+effort baked in.
+Use the **least** tier that can do the job. Route via `subagent_type`. Each agent's **model** is read from its frontmatter; the **effort** column is the tier's *intended* reasoning level — pass it on the dispatch call if your harness supports per-call effort (Claude Code does **not** read an `effort:` field from an agent file), otherwise it inherits the session effort.
 
 | Tier | `subagent_type` | Model / effort | For |
 |------|-----------------|----------------|-----|

@@ -1,0 +1,1 @@
+I just finished writing a `calculateInvoiceTotal(lineItems, taxRate, discountCode)` function and it works for the basic case. Can you write a solid test suite for it so I'm confident it actually holds up in production?

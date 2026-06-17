@@ -27,6 +27,21 @@ escape_for_json() {
     s="${s//$'\n'/\\n}"
     s="${s//$'\r'/\\r}"
     s="${s//$'\t'/\\t}"
+    # Catch-all: escape any remaining C0 control char (0x00-0x1F other than the \n \r \t handled
+    # above) as \uXXXX. JSON forbids literal control characters; without this an exotic byte in the
+    # skill file would emit invalid JSON. The per-char loop runs ONLY when one is present (the glob
+    # test short-circuits the common clean case), preserving the fast path. NUL can't occur — the
+    # content came through $(cat ...), which strips NULs.
+    local ctl=$'\x01\x02\x03\x04\x05\x06\x07\x08\x0b\x0c\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f'
+    if [[ "$s" == *["$ctl"]* ]]; then
+        local out="" i ch
+        for (( i=0; i<${#s}; i++ )); do
+            ch="${s:i:1}"
+            [[ "$ch" == ["$ctl"]* ]] && printf -v ch '\\u%04x' "'$ch"
+            out+="$ch"
+        done
+        s="$out"
+    fi
     printf '%s' "$s"
 }
 

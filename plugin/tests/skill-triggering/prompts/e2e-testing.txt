@@ -1,0 +1,1 @@
+Our checkout flow spans three services — the cart API, the payment gateway, and the orders database. I want tests that drive the whole user journey end to end against the real services, not mocks. How should I build those?

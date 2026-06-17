@@ -1,5 +1,13 @@
 # Superpowers — Contributor Guidelines
 
+> **Fork note (superpowers-cc-extended).** This is a token-optimized, capability-*extended* fork. It
+> intentionally adds skills and agents that the upstream core-scope rules below would exclude — the
+> `architecture-/delivery-/compliance-standards` skills and the `sp-mechanical/standard/deep` tier
+> agents are deliberate **fork** additions, not proposals for upstream core. The guidelines below are
+> upstream's contribution policy, retained for anyone contributing **upstream**; fork-local additions
+> are governed by this repo's root `CLAUDE.md`, not by the "domain-specific / fork-specific"
+> prohibitions in "What We Will Not Accept" below.
+
 ## If You Are an AI Agent
 
 Stop. Read this section before doing anything.

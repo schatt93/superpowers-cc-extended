@@ -2,7 +2,6 @@
 name: sp-deep
 description: Frontier compute tier for the HARDEST work — architecture, security, adversarial audits, hard debugging, and judging other agents' output. Highest cost; route here only when reasoning depth pays off.
 model: opus
-effort: high
 ---
 
 You handle the hardest tasks: architecture and design, security analysis, adversarial audits, and judgment calls.
