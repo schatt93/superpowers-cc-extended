@@ -22,7 +22,7 @@ judged **preserved-and-improved**.
 
 ## Added skills (from the Engineering Developer Guidebook)
 
-Four new on-demand skills + Tier-1 pointers, all validated (subagent RED→GREEN, disjoint triggering confirmed):
+Eight new on-demand skills (+ 3 tier agents) + Tier-1 pointers, all validated (subagent RED→GREEN, disjoint triggering confirmed):
 
 | Skill | Purpose |
 |---|---|
@@ -31,10 +31,13 @@ Four new on-demand skills + Tier-1 pointers, all validated (subagent RED→GREEN
 | `e2e-testing` | Full-journey tests across real boundaries; five paths at system scale + load/soak/chaos + device matrix |
 | `concise-output` | Output-token discipline: results-first, structured-over-prose, capped/shaped subagent returns (~5x input price) |
 | `orchestration-routing` | Smart dispatch: pick execution shape (inline / agent / parallel / **Workflow**) + compute tier (model+effort) per task; routes to `sp-mechanical`/`sp-standard`/`sp-deep` agents |
+| `architecture-standards` | Org architecture (Guidebook A): UDF/BLoC, hexagonal/DDD/CQRS, saga/outbox/effectively-once, L4/L7/BGP, DLQ |
+| `delivery-standards` | Org delivery/ops (Guidebook B): blue-green/canary, OAuth2.1 token-exchange, RTO/RPO tiers + CAP, split-brain |
+| `compliance-standards` | Org compliance/supply-chain (Guidebook E): OPA policy-as-code, SBOM, Cosign signing/admission |
 
 Tier-1 edits point `test-driven-development`, `verification-before-completion`, and `requesting-code-review` at these.
 
-**Always-on ledger:** Tier-0 + CSO −530; +195 (4 testing/output skill descriptions) +165 (orchestration-routing + 3 tier-agent descriptions) = **net −170 tok/conversation**. Bodies are on-demand only.
+**Always-on ledger:** Tier-0 + CSO −530; +195 (4 testing/output skills) +165 (orchestration-routing + 3 tier agents) +131 (3 standards skills) = **net −39 tok/conversation**. The original input win is now ~spent on capability (8 new skills + 3 agents) — near-neutral always-on, much broader capability; bodies stay on-demand (free until invoked).
 
 - **Output side:** `concise-output` — subagent-validated ~65% terser returns, substance intact.
 - **Smart dispatch:** `orchestration-routing` + `sp-mechanical`/`sp-standard`/`sp-deep` agents auto-route **model + effort + execution shape** (Workflow when warranted). Main-loop thinking/effort stays **user-only** — the skill advises `/effort`, it cannot auto-set it (hooks get it read-only). `effort:` frontmatter is doc-confirmed; live-verified on deploy.
@@ -57,12 +60,13 @@ Dropped as unsafe/ROI-negative: body-compressing the 15 on-demand skills, `share
 
 ## Files
 
-- `plugin/` — the optimized plugin (git baseline `f647c54` = pristine; later commits = edits)
+- `plugin/` — the optimized plugin + 3 tier agents (git tag `pristine-baseline` = pristine copy; later commits = edits). History was scrubbed of node_modules + real email, so SHAs were rewritten — refs use the tag, not a SHA.
 - `measure.mjs` — token + lint harness. `node measure.mjs measure plugin <name> --force`, then
   `node measure.mjs diff baseline <name>` (pass/fail vs pre-registered threshold).
 - `apply-cso.mjs` / `tokens-delta.mjs` — the CSO edit + its measurement.
 - `docs/2026-06-16-tier0-cso-optimization-design.md` — design & decision record.
-- `deploy.sh` — deploy the 8 changed files **+ 3 new skills** into the live install. **Dry-run by default; pass `--apply`.** Backs up + only overwrites known-pristine files; creates new skills if absent; auto-detects the active version.
+- `deploy.sh` — deploy **all changed skill/agent files** (auto-discovered from `git diff pristine-baseline HEAD`) into the live install. **Dry-run by default; pass `--apply`.** Backs up + overwrites only known-pristine files; creates new skills/agents if absent; auto-detects the active version.
+- `OUTPUT-LEVERS.md` / `MODEL-ROUTING.md` — output-token levers (ranked) + the model/effort routing + dispatch-guard analysis.
 
 ## Deploy later (3 paths — not mutually exclusive)
 
