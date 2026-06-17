@@ -37,6 +37,13 @@ Before defining tasks, map out which files will be created or modified and what 
 
 This structure informs the task decomposition. Each task should produce self-contained changes that make sense independently.
 
+## Standards checkpoints (org)
+
+For work touching these areas, conform to the org standards (your CLAUDE.md overrides them):
+- **System / service architecture** → superpowers-extended-cc:architecture-standards
+- **Release / deployment / disaster-recovery** → superpowers-extended-cc:delivery-standards
+- **CI/CD compliance / supply chain** → superpowers-extended-cc:compliance-standards
+
 ## REQUIRED FIRST STEP: Initialize Task Tracking
 
 **BEFORE exploring code or writing the plan, you MUST:**
