@@ -1,17 +1,17 @@
 #!/usr/bin/env bash
-# Apply the validated optimization to the LIVE plugin install:
-#   - 8 MODIFIED files (Tier-0 + CSO) — overwritten only if they match known-pristine
-#   - 3 NEW skills (writing-tests, adversarial-audit, e2e-testing) — created if absent
+# Apply the validated optimization to the LIVE plugin install.
 #
-# SAFE BY DEFAULT: this is a DRY-RUN unless you pass --apply. (An earlier version
-# deployed on an empty arg — that footgun is fixed; nothing writes without --apply.)
+# Auto-discovers EVERY skill file changed since the pristine baseline (no hardcoded list to go stale):
+#   - existed at baseline -> overwrite ONLY if the target still matches pristine (never clobber upstream)
+#   - new since baseline  -> create if absent
+#
+# SAFE BY DEFAULT: dry-run unless --apply. Backs up before overwriting. --force overrides the guards.
 #
 # Usage:
 #   bash deploy.sh                  # dry-run against the auto-detected active install
-#   bash deploy.sh --apply          # actually deploy (with per-file backup)
+#   bash deploy.sh --apply          # deploy (with per-file backup)
 #   bash deploy.sh --cache <path>   # override the target install path
 #   bash deploy.sh --apply --force  # also overwrite files that differ from known-pristine
-#                                   #   (e.g. an upstream-changed file on a newer version)
 set -euo pipefail
 
 APPLY=0; FORCE=0; CACHE=""
@@ -38,72 +38,42 @@ if [ -z "$CACHE" ]; then
   fi
   [ -z "$CACHE" ] && CACHE="$HOME/.claude/plugins/cache/superpowers-extended-cc-marketplace/superpowers-extended-cc/5.5.0"
 fi
-if [ ! -d "$CACHE/skills" ]; then
-  echo "ERROR: no skills/ under '$CACHE'. Pass --cache <path>." >&2; exit 1
-fi
-
-files=(
-  skills/using-superpowers/SKILL.md            # Tier-0 always-on rewrite (-31.2% tokens)
-  skills/brainstorming/SKILL.md                # CSO description
-  skills/checking-gates/SKILL.md
-  skills/finishing-a-development-branch/SKILL.md
-  skills/receiving-code-review/SKILL.md
-  skills/specifying-gates/SKILL.md
-  skills/using-git-worktrees/SKILL.md
-  skills/verification-before-completion/SKILL.md
-)
+[ -d "$CACHE/skills" ] || { echo "ERROR: no skills/ under '$CACHE'. Pass --cache <path>." >&2; exit 1; }
 
 echo "Target : $CACHE"
 echo "Mode   : $([ $APPLY -eq 1 ] && echo APPLY || echo 'DRY-RUN (pass --apply to write)')"
 BACKUP="$SRCROOT/backups/$(date -u +%Y%m%dT%H%M%SZ)"
 applied=0; skipped=0; warned=0
 
-for f in "${files[@]}"; do
-  tgt="$CACHE/$f"
-  [ -f "$tgt" ] || { echo "  WARN  not in install: $f (skip)"; warned=$((warned+1)); continue; }
-  # Source content from git blobs (LF-canonical) — avoids CRLF contamination from the working tree.
-  if git -C "$SRCROOT" show "HEAD:plugin/$f" | diff -q - "$tgt" >/dev/null 2>&1; then
-    echo "  skip  already optimized: $f"; skipped=$((skipped+1)); continue
+while IFS= read -r rel; do
+  [ -z "$rel" ] && continue                     # rel = plugin/skills/...
+  f="${rel#plugin/}"; tgt="$CACHE/$f"
+  # Already deployed (target == optimized HEAD)?  Source from git blobs (LF-canonical).
+  if [ -f "$tgt" ] && git -C "$SRCROOT" show "HEAD:$rel" | diff -q - "$tgt" >/dev/null 2>&1; then
+    echo "  skip  already current: $f"; skipped=$((skipped+1)); continue
   fi
-  if ! git -C "$SRCROOT" show "$BASELINE_REF:plugin/$f" | diff -q - "$tgt" >/dev/null 2>&1; then
-    if [ $FORCE -eq 0 ]; then
-      echo "  WARN  target differs from known-pristine (upstream-changed?): $f — skip (use --force)"; warned=$((warned+1)); continue
+  if git -C "$SRCROOT" cat-file -e "$BASELINE_REF:$rel" 2>/dev/null; then
+    kind="update"                               # existed at baseline -> modified file
+    if [ ! -f "$tgt" ]; then echo "  WARN  expected-but-missing in install: $f — skip"; warned=$((warned+1)); continue; fi
+    if [ $FORCE -eq 0 ] && ! git -C "$SRCROOT" show "$BASELINE_REF:$rel" | diff -q - "$tgt" >/dev/null 2>&1; then
+      echo "  WARN  differs from known-pristine (upstream-changed?): $f — skip (use --force)"; warned=$((warned+1)); continue
+    fi
+  else
+    kind="add"                                  # new since baseline
+    if [ -f "$tgt" ] && [ $FORCE -eq 0 ]; then
+      echo "  WARN  unexpected existing file: $f — skip (use --force)"; warned=$((warned+1)); continue
     fi
   fi
   if [ $APPLY -eq 1 ]; then
-    mkdir -p "$BACKUP/$(dirname "$f")"; cp "$tgt" "$BACKUP/$f"
-    git -C "$SRCROOT" show "HEAD:plugin/$f" > "$tgt"
-    echo "  APPLIED $f"
+    [ -f "$tgt" ] && { mkdir -p "$BACKUP/$(dirname "$f")"; cp "$tgt" "$BACKUP/$f"; }
+    mkdir -p "$(dirname "$tgt")"
+    git -C "$SRCROOT" show "HEAD:$rel" > "$tgt"
+    echo "  $([ "$kind" = add ] && echo ADDED || echo UPDATED) $f"
   else
-    echo "  would deploy $f"
+    echo "  would $kind $f"
   fi
   applied=$((applied+1))
-done
-
-# --- new skills (whole directories absent from upstream): create-if-absent ---
-newskills=( writing-tests adversarial-audit e2e-testing )
-for sk in "${newskills[@]}"; do
-  while IFS= read -r rel; do
-    [ -z "$rel" ] && continue
-    f="${rel#plugin/}"                       # skills/<sk>/...
-    tgt="$CACHE/$f"
-    if [ -f "$tgt" ] && git -C "$SRCROOT" show "HEAD:$rel" | diff -q - "$tgt" >/dev/null 2>&1; then
-      echo "  skip  already present: $f"; skipped=$((skipped+1)); continue
-    fi
-    if [ -f "$tgt" ] && [ $FORCE -eq 0 ]; then
-      echo "  WARN  unexpected existing file (not from this workspace): $f — skip (use --force)"; warned=$((warned+1)); continue
-    fi
-    if [ $APPLY -eq 1 ]; then
-      [ -f "$tgt" ] && { mkdir -p "$BACKUP/$(dirname "$f")"; cp "$tgt" "$BACKUP/$f"; }
-      mkdir -p "$(dirname "$tgt")"
-      git -C "$SRCROOT" show "HEAD:$rel" > "$tgt"
-      echo "  ADDED $f"
-    else
-      echo "  would add $f"
-    fi
-    applied=$((applied+1))
-  done < <(git -C "$SRCROOT" ls-tree -r --name-only HEAD "plugin/skills/$sk")
-done
+done < <(git -C "$SRCROOT" diff --name-only "$BASELINE_REF" HEAD -- plugin/skills)
 
 echo ""
 echo "Summary: $([ $APPLY -eq 1 ] && echo applied || echo would-apply)=$applied  skipped=$skipped  warned=$warned"
