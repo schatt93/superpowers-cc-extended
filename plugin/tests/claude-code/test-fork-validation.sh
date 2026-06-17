@@ -39,8 +39,11 @@ else
 fi
 
 # 3. Skill references use superpowers-extended-cc: prefix (not bare superpowers:)
+#    Excludes references/ dirs (non-CC platform mirror tables, e.g. gemini-tools.md, legitimately
+#    cite upstream agent names like superpowers:implementer — same carve-out as Test 2).
 echo "Test 3: Skill prefix consistency..."
 BARE=$(grep -rn "superpowers:" "$REPO_ROOT/skills/" "$REPO_ROOT/commands/" "$REPO_ROOT/hooks/" 2>/dev/null \
+    | grep -v "/references/" \
     | grep -v "superpowers-extended-cc:" \
     | grep -v "superpowers-extended-cc" \
     | grep -v "obra/superpowers" \

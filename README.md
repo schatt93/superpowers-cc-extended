@@ -22,9 +22,9 @@ Or in a session:
 
 ## Why this fork
 
-**1. Leaner always-on context.** Only one file is injected into *every* conversation (`using-superpowers`, via the SessionStart hook). It was rewritten **−31.2%** (cut Claude-Code-irrelevant multi-platform sections, flowchart→list) and the skill-registry descriptions were tightened — with **zero loss of Claude-Code behavior** (independently, adversarially audited; the discipline content is byte-identical).
+**1. Leaner always-on context.** Only one file is injected into *every* conversation (`using-superpowers`, via the SessionStart hook). It was rewritten **−31.2%** (1302→896 tok — cut Claude-Code-irrelevant multi-platform sections, flowchart→list) and 7 registry descriptions were tightened (−124 tok), with **zero loss of Claude-Code behavior** (independently, adversarially audited: only non-CC platform text was dropped — every Red-Flags row, the rationalization block, and the skill-priority rules are byte-preserved, and inherited skill bodies change only by *appended* cross-references, never deletions). This release also *adds* the 8 new skills' + 3 agents' descriptions to the always-on registry (+491 tok), so the **net always-on change is −39 tok** — a smaller always-on footprint *while* shipping 11 new capabilities.
 
-**2. New capabilities** (all on-demand — they cost nothing until invoked; each validated RED→GREEN):
+**2. New capabilities** (each skill *body* is on-demand — zero cost until invoked; their descriptions are the registry cost already counted in the −39 net above). Each is authored to the `writing-skills` doctrine and **structurally validated** (lint-clean, balanced fences, resolvable links, trigger-only descriptions); behavioral RED→GREEN triggering evals are not yet in the automated suite:
 
 | Skill | What it does |
 |---|---|
@@ -64,7 +64,7 @@ Skills trigger automatically from their descriptions — start a task and the re
 This repo is also the optimization workspace:
 
 - `plugin/` — the installable plugin (skills, agents, hooks, commands).
-- `measure.mjs` — token + structural-lint harness. `node measure.mjs measure plugin <name>` then `node measure.mjs diff baseline <name>`.
+- `measure.mjs` — token + structural-lint + body-preservation harness. `node measure.mjs measure plugin <name>` then `node measure.mjs diff baseline <name>`. The `diff` gate fails unless the always-on cut ≥30%, lint regressions ≤0, **and** every inherited skill body is still an additive superset of its `pristine-baseline` version (no discipline silently removed).
 - `deploy.sh` — apply the optimized files into a live local install (dry-run by default; `--apply`).
 - `docs/`, `OUTPUT-LEVERS.md`, `MODEL-ROUTING.md` — design record, output-token levers, and model/effort routing notes.
 - Git tag `pristine-baseline` marks the unmodified upstream copy (history is scrubbed of build artifacts).

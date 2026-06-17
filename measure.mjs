@@ -9,6 +9,7 @@
 //  - refuses to overwrite an existing report without --force
 import { readdirSync, readFileSync, writeFileSync, existsSync } from "node:fs";
 import { join, relative, dirname } from "node:path";
+import { execFileSync } from "node:child_process";
 import { encode } from "gpt-tokenizer";
 
 // --- contracts -------------------------------------------------------------
@@ -23,6 +24,51 @@ const THRESHOLDS = {
 const CRUFT = /\b(Copilot|Codex|Cursor|opencode|activate_skill)\b/g;
 
 const tok = (s) => { try { return encode(s).length; } catch { return Math.round(s.length / 4); } };
+
+// --- behavior-preservation oracle -----------------------------------------
+// The token gate alone certifies any edit that shrinks the always-on file >=30%, even one that
+// guts discipline. This closes that blind spot: every INHERITED skill's DISCIPLINE BODY (the text
+// after frontmatter) must be preserved ADDITIVELY — pristine body lines must still appear, in order,
+// as a subsequence of the current body (insertions OK; deletions/edits are violations). Encodes the
+// project's real claim ("no inherited discipline removed; changes are appended cross-references").
+// The always-on file is deliberately rewritten under the separate token gate, so it is exempt here.
+const BASELINE_REF = "pristine-baseline";
+const BODY_REWRITE_EXEMPT = new Set(["skills/using-superpowers/SKILL.md"]);
+
+const stripFrontmatter = (t) => {
+  const m = t.match(/^---\r?\n[\s\S]*?\r?\n---\r?\n?/);
+  return (m ? t.slice(m[0].length) : t).replace(/\r\n/g, "\n");
+};
+// every needle line present, in order, within haystack (insertions allowed; deletions/edits are not)
+const isSubsequence = (needle, hay) => {
+  let i = 0;
+  for (const line of hay) if (i < needle.length && line === needle[i]) i++;
+  return i === needle.length;
+};
+function gitShow(ref, path) {
+  try { return execFileSync("git", ["show", `${ref}:${path}`], { encoding: "utf8" }); }
+  catch { return null; } // absent at baseline (new file) => no preservation obligation
+}
+// Returns { checked, violations: [rel...] }, or null if the baseline ref is unavailable.
+function bodyIntegrity(root, files) {
+  try { execFileSync("git", ["rev-parse", "--verify", `${BASELINE_REF}^{commit}`], { stdio: "ignore" }); }
+  catch { return null; }
+  const gitRoot = root.replace(/\\/g, "/").replace(/\/+$/, "");
+  const violations = [];
+  let checked = 0;
+  for (const r of files) {
+    if (!r.file.endsWith("SKILL.md") || BODY_REWRITE_EXEMPT.has(r.file)) continue;
+    const pristine = gitShow(BASELINE_REF, `${gitRoot}/${r.file}`);
+    if (pristine === null) continue; // new since baseline
+    checked++;
+    // Normalize the fork's ONE sanctioned global transform — the upstream `superpowers:` skill prefix
+    // is rebranded to `superpowers-extended-cc:` — so a pure prefix rebrand reads as "unchanged" here,
+    // while any OTHER deletion or edit of an inherited line still trips the subsequence check.
+    const norm = (t) => stripFrontmatter(t).replace(/superpowers:/g, "superpowers-extended-cc:").split("\n");
+    if (!isSubsequence(norm(pristine), norm(readFileSync(join(root, r.file), "utf8")))) violations.push(r.file);
+  }
+  return { checked, violations };
+}
 
 function walk(dir) {
   const out = [];
@@ -90,6 +136,7 @@ function measure(root, outName, force) {
   const sum = (k) => files.reduce((n, r) => n + r[k], 0);
   const entry = files.find((r) => r.role === "always-on");
   const lintIssues = files.filter((r) => r.lint.length).flatMap((r) => r.lint.map((i) => `${r.file}: ${i}`));
+  const bi = bodyIntegrity(root, files);
   const report = {
     root: root.replace(/\\/g, "/"),
     fileCount: files.length,
@@ -97,6 +144,7 @@ function measure(root, outName, force) {
     alwaysOn: entry ? { file: entry.file, words: entry.words, tokens: entry.tokens, cruftHits: entry.cruftHits } : null,
     lintIssueCount: lintIssues.length,
     lintIssues,
+    bodyIntegrity: bi,
     files,
   };
   writeFileSync(outPath, JSON.stringify(report, null, 2));
@@ -105,6 +153,8 @@ function measure(root, outName, force) {
   console.log(`files=${report.fileCount}  words=${report.totals.words}  tokens=${report.totals.tokens}  cruft=${report.totals.cruftHits}  lintIssues=${report.lintIssueCount}`);
   if (entry) console.log(`ALWAYS-ON (injected every conversation): ${entry.file}  ${entry.words}w  ${entry.tokens} tok  cruft=${entry.cruftHits}`);
   if (lintIssues.length) console.log("LINT:\n  " + lintIssues.join("\n  "));
+  if (bi) console.log(`BODY INTEGRITY (vs ${BASELINE_REF}): checked ${bi.checked} inherited skills, violations=${bi.violations.length}${bi.violations.length ? ": " + bi.violations.join(", ") : ""}`);
+  else console.log(`BODY INTEGRITY: ${BASELINE_REF} unavailable — skipped (cannot enforce body preservation)`);
   console.log(`\nwrote reports/${outName}.json`);
 }
 
@@ -117,19 +167,26 @@ function diff(baseName, postName) {
   const aoWas = b.alwaysOn.tokens, aoNow = p.alwaysOn.tokens, aoPct = pct(aoWas, aoNow);
   const corpPct = pct(b.totals.tokens, p.totals.tokens);
   const lintReg = p.lintIssueCount - b.lintIssueCount;
+  const bodyViol = p.bodyIntegrity ? p.bodyIntegrity.violations : null;
 
   console.log(`\n=== DELTA: ${baseName} -> ${postName} ===`);
   console.log(`ALWAYS-ON tokens : ${aoWas} -> ${aoNow}   (${aoPct.toFixed(1)}% cut)`);
   console.log(`Corpus tokens    : ${b.totals.tokens} -> ${p.totals.tokens}   (${corpPct.toFixed(1)}% cut)`);
   console.log(`Lint issues      : ${b.lintIssueCount} -> ${p.lintIssueCount}   (regressions: ${lintReg})`);
+  console.log(`Body integrity   : ${bodyViol ? bodyViol.length + " violation(s)" + (bodyViol.length ? " [" + bodyViol.join(", ") + "]" : "") : "n/a (baseline ref absent in post report)"}`);
 
-  const pass = aoPct >= THRESHOLDS.alwaysOnReductionPct && lintReg <= THRESHOLDS.maxLintRegressions;
-  console.log(`\nThreshold: always-on cut >= ${THRESHOLDS.alwaysOnReductionPct}%  AND  lint regressions <= ${THRESHOLDS.maxLintRegressions}`);
+  const bodyOk = bodyViol === null || bodyViol.length === 0;
+  const pass = aoPct >= THRESHOLDS.alwaysOnReductionPct && lintReg <= THRESHOLDS.maxLintRegressions && bodyOk;
+  console.log(`\nThreshold: always-on cut >= ${THRESHOLDS.alwaysOnReductionPct}%  AND  lint regressions <= ${THRESHOLDS.maxLintRegressions}  AND  inherited skill bodies preserved (additive-only)`);
   console.log(pass ? "RESULT: PASS ✅" : "RESULT: FAIL ❌");
   process.exit(pass ? 0 : 1);
 }
 
 const [mode, a, c, d] = process.argv.slice(2);
 if (mode === "diff") diff(a, c);
-else if (mode === "measure") measure(a || "plugin", c || "current", d === "--force" || c === "--force");
+else if (mode === "measure") {
+  const force = [a, c, d].includes("--force");
+  const name = c && !c.startsWith("--") ? c : "current"; // don't let a flag become the report name
+  measure(a || "plugin", name, force);
+}
 else { console.error("usage: measure.mjs measure <root> <name> [--force]  |  measure.mjs diff <baseName> <postName>"); process.exit(1); }

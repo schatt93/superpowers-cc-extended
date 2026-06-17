@@ -19,7 +19,7 @@ while [ $# -gt 0 ]; do
   case "${1:-}" in
     --apply) APPLY=1 ;;
     --force) FORCE=1 ;;
-    --cache) shift; CACHE="${1:-}"; [ -z "$CACHE" ] && { echo "ERROR: --cache needs a path" >&2; exit 1; } ;;
+    --cache) shift; CACHE="${1:-}"; { [ -z "$CACHE" ] || [ "${CACHE#--}" != "$CACHE" ]; } && { echo "ERROR: --cache needs a path (got '${CACHE:-}')" >&2; exit 1; } ;;
     "") echo "ERROR: empty argument. Use --apply / --cache <path>." >&2; exit 1 ;;
     *) echo "ERROR: unknown argument '$1'" >&2; exit 1 ;;
   esac
@@ -33,7 +33,12 @@ BASELINE_REF="pristine-baseline"   # git tag on the pristine v5.5.0 copy (surviv
 if [ -z "$CACHE" ]; then
   IP="$HOME/.claude/plugins/installed_plugins.json"
   if command -v jq >/dev/null 2>&1 && [ -f "$IP" ]; then
-    raw=$(jq -r '.["superpowers-extended-cc@superpowers-extended-cc-marketplace"][0].installPath // empty' "$IP" 2>/dev/null || true)
+    # Records nest under .plugins (schema {version,plugins:{…}}). The "@<marketplace>" suffix differs
+    # by install source: the root fork marketplace is "superpowers-cc-extended"; an upstream install
+    # uses "superpowers-extended-cc-marketplace". Try both; first hit with an installPath wins.
+    raw=$(jq -r '.plugins["superpowers-extended-cc@superpowers-cc-extended"][0].installPath
+                 // .plugins["superpowers-extended-cc@superpowers-extended-cc-marketplace"][0].installPath
+                 // empty' "$IP" 2>/dev/null || true)
     [ -n "$raw" ] && CACHE=$(printf '%s' "$raw" | sed 's#\\#/#g')
   fi
   [ -z "$CACHE" ] && CACHE="$HOME/.claude/plugins/cache/superpowers-extended-cc-marketplace/superpowers-extended-cc/5.5.0"
