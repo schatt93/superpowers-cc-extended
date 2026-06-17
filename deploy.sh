@@ -27,7 +27,7 @@ while [ $# -gt 0 ]; do
 done
 
 SRCROOT="$(cd "$(dirname "$0")" && pwd)"
-BASELINE_REF="f647c54"   # pristine v5.5.0 == upstream 26c74c8 (audit-verified)
+BASELINE_REF="pristine-baseline"   # git tag on the pristine v5.5.0 copy (survives history rewrites)
 
 # Resolve the ACTIVE install path (don't hard-pin a version that /plugin update can supersede).
 if [ -z "$CACHE" ]; then

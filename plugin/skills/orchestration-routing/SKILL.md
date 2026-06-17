@@ -34,7 +34,7 @@ Use the **least** tier that can do the job. Route via `subagent_type`; each tier
 
 A `BLOCKED: needs higher tier` return → re-dispatch one tier up. Never silently retry the same tier.
 
-> Enforcement: set `subagentType` in a task's `json:metadata` to the required tier; the dispatch-guard hook already blocks a wrong-tier dispatch (no extra wiring).
+> Enforcement (optional): if the dispatch-guard hook is registered (opt-in — see MODEL-ROUTING.md), it blocks a wrong-tier dispatch via the existing `subagentType` check. It's an advisory nudge (fails open), not a hard gate.
 
 ## 3. Main-loop compute (advisory — cannot be auto-set)
 

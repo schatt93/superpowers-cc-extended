@@ -143,7 +143,9 @@ MISMATCHES=()
 if [[ -n "$REQ_SUBTYPE" && "$AGENT_SUBTYPE" != "$REQ_SUBTYPE" ]]; then
     MISMATCHES+=("subagent_type: required='$REQ_SUBTYPE', got='$AGENT_SUBTYPE'")
 fi
-if [[ -n "$REQ_MODEL" && "$AGENT_MODEL" != "$REQ_MODEL" ]]; then
+# Normalize model aliases vs full ids (haiku == claude-haiku-4-5) to avoid false-blocks.
+norm_model() { case "$1" in *haiku*) echo haiku;; *sonnet*) echo sonnet;; *opus*) echo opus;; *) echo "$1";; esac; }
+if [[ -n "$REQ_MODEL" && "$(norm_model "$AGENT_MODEL")" != "$(norm_model "$REQ_MODEL")" ]]; then
     MISMATCHES+=("model: required='$REQ_MODEL', got='$AGENT_MODEL'")
 fi
 if [[ -n "$REQ_BRIEF" && "$AGENT_PROMPT" != *"$REQ_BRIEF"* ]]; then
