@@ -8,8 +8,9 @@
 //  - structural lint over every SKILL.md (frontmatter / links / code fences)
 //  - refuses to overwrite an existing report without --force
 import { readdirSync, readFileSync, writeFileSync, existsSync } from "node:fs";
-import { join, relative, dirname } from "node:path";
+import { join, relative, dirname, resolve } from "node:path";
 import { execFileSync } from "node:child_process";
+import { fileURLToPath } from "node:url";
 import { encode } from "gpt-tokenizer";
 
 // --- contracts -------------------------------------------------------------
@@ -35,16 +36,18 @@ const tok = (s) => { try { return encode(s).length; } catch { return Math.round(
 const BASELINE_REF = "pristine-baseline";
 const BODY_REWRITE_EXEMPT = new Set(["skills/using-superpowers/SKILL.md"]);
 
-const stripFrontmatter = (t) => {
+export const stripFrontmatter = (t) => {
   const m = t.match(/^---\r?\n[\s\S]*?\r?\n---\r?\n?/);
   return (m ? t.slice(m[0].length) : t).replace(/\r\n/g, "\n");
 };
 // every needle line present, in order, within haystack (insertions allowed; deletions/edits are not)
-const isSubsequence = (needle, hay) => {
+export const isSubsequence = (needle, hay) => {
   let i = 0;
   for (const line of hay) if (i < needle.length && line === needle[i]) i++;
   return i === needle.length;
 };
+// the fork's ONE sanctioned global transform on inherited bodies (see bodyIntegrity)
+export const normalizeRebrand = (t) => t.replace(/superpowers:/g, "superpowers-extended-cc:");
 function gitShow(ref, path) {
   try { return execFileSync("git", ["show", `${ref}:${path}`], { encoding: "utf8" }); }
   catch { return null; } // absent at baseline (new file) => no preservation obligation
@@ -64,7 +67,7 @@ function bodyIntegrity(root, files) {
     // Normalize the fork's ONE sanctioned global transform — the upstream `superpowers:` skill prefix
     // is rebranded to `superpowers-extended-cc:` — so a pure prefix rebrand reads as "unchanged" here,
     // while any OTHER deletion or edit of an inherited line still trips the subsequence check.
-    const norm = (t) => stripFrontmatter(t).replace(/superpowers:/g, "superpowers-extended-cc:").split("\n");
+    const norm = (t) => normalizeRebrand(stripFrontmatter(t)).split("\n");
     if (!isSubsequence(norm(pristine), norm(readFileSync(join(root, r.file), "utf8")))) violations.push(r.file);
   }
   return { checked, violations };
@@ -81,7 +84,7 @@ function walk(dir) {
 }
 
 // Structural lint — cheap, deterministic, no LLM. Returns array of issue strings.
-function lint(text, rel, root) {
+export function lint(text, rel, root) {
   const issues = [];
   const isSkill = rel.endsWith("SKILL.md");
   if (isSkill) {
@@ -182,11 +185,14 @@ function diff(baseName, postName) {
   process.exit(pass ? 0 : 1);
 }
 
-const [mode, a, c, d] = process.argv.slice(2);
-if (mode === "diff") diff(a, c);
-else if (mode === "measure") {
-  const force = [a, c, d].includes("--force");
-  const name = c && !c.startsWith("--") ? c : "current"; // don't let a flag become the report name
-  measure(a || "plugin", name, force);
+// CLI entry — guarded so importing this module (e.g. from the test suite) does not run the dispatch.
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  const [mode, a, c, d] = process.argv.slice(2);
+  if (mode === "diff") diff(a, c);
+  else if (mode === "measure") {
+    const force = [a, c, d].includes("--force");
+    const name = c && !c.startsWith("--") ? c : "current"; // don't let a flag become the report name
+    measure(a || "plugin", name, force);
+  }
+  else { console.error("usage: measure.mjs measure <root> <name> [--force]  |  measure.mjs diff <baseName> <postName>"); process.exit(1); }
 }
-else { console.error("usage: measure.mjs measure <root> <name> [--force]  |  measure.mjs diff <baseName> <postName>"); process.exit(1); }

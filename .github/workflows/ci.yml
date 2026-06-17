@@ -1,0 +1,67 @@
+name: CI
+
+# Deterministic gate — pure functions of the repo, no credentials. Runs on every push/PR.
+# The LLM behavioral suite (plugin/tests/skill-triggering) is NOT here: it needs an authenticated
+# claude CLI, so it runs agent-driven (an authenticated session / scheduled routine), not headless.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gate:
+    name: Deterministic gate (no credentials)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (full history + tags — the body-integrity gate needs the pristine-baseline tag)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Unit tests (measure.mjs logic)
+        run: npm test
+
+      - name: Token + lint + body-preservation gate
+        run: |
+          node measure.mjs measure plugin ci --force
+          node measure.mjs diff baseline ci
+
+      - name: apply-cso is idempotent (descriptions in HEAD are canonical)
+        run: |
+          node apply-cso.mjs
+          git diff --exit-code || { echo "::error::apply-cso.mjs produced drift — registry descriptions are out of sync with HEAD"; exit 1; }
+
+      - name: Fork invariants (names, prefixes, native-task sections)
+        run: bash plugin/tests/claude-code/test-fork-validation.sh
+
+      - name: Model-routing dispatch guard (exit 0 allow / 2 block)
+        run: bash test-dispatch-guard.sh
+
+      - name: SessionStart hook emits valid JSON
+        run: |
+          CLAUDE_PLUGIN_ROOT="$PWD/plugin" bash plugin/hooks/session-start | jq empty
+          echo "SessionStart hook JSON is valid"
+
+      - name: Manifests and hook config are valid JSON
+        run: |
+          for f in \
+            .claude-plugin/marketplace.json \
+            plugin/.claude-plugin/plugin.json \
+            plugin/.claude-plugin/marketplace.json \
+            plugin/hooks/hooks.json; do
+            jq empty "$f" && echo "ok: $f"
+          done
