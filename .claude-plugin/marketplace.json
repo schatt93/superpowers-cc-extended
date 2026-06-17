@@ -1,0 +1,18 @@
+{
+  "name": "superpowers-cc-extended",
+  "description": "Token-optimized, capability-extended fork of superpowers-extended-cc for Claude Code.",
+  "owner": {
+    "name": "schatt93"
+  },
+  "plugins": [
+    {
+      "name": "superpowers-extended-cc",
+      "source": "./plugin",
+      "description": "Agentic skills framework for Claude Code: leaner always-on context + tiered model/effort dispatch, testing, adversarial audit, E2E, output economy, and org architecture/delivery/compliance standards. Fork of pcvelz/superpowers.",
+      "version": "5.5.0",
+      "author": {
+        "name": "schatt93"
+      }
+    }
+  ]
+}

@@ -1,78 +1,74 @@
-# superpowers-extended-cc — token optimization (validated draft, NOT deployed)
+# superpowers-cc-extended
 
-A workspace copy of the active `superpowers-extended-cc` v5.5.0 plugin, optimized for
-per-conversation token cost without losing context. The live install is **untouched**.
+A **token-optimized, capability-extended** fork of [`pcvelz/superpowers`](https://github.com/pcvelz/superpowers) (`superpowers-extended-cc`) — an agentic skills framework for Claude Code. Same battle-tested discipline (brainstorming, TDD, debugging, planning, code review), with a **leaner always-on footprint** and new skills for thorough testing, adversarial auditing, E2E, output economy, smart dispatch, and org engineering standards.
 
-## Result (real cl100k tokens)
+> Based on `superpowers-extended-cc` by pcvelz (itself a fork of `obra/superpowers`). MIT licensed. Optimizations + extensions by schatt93.
 
-| Always-on surface (injected every conversation) | Before | After | Saved |
-|---|---|---|---|
-| `using-superpowers/SKILL.md` (SessionStart hook) | 1,302 | 896 | **−406 (−31.2%)** |
-| 7 skill descriptions (skills registry) | 300 | 176 | **−124 (−41%)** |
-| **Total recurring saving / conversation** | | | **~530 tokens** |
+## Install
 
-Structural lint: 0→0 regressions. Verbatim-preserved blocks (EXTREMELY-IMPORTANT gate, Red-Flags
-table, Skill-Priority/Types, SUBAGENT-STOP) are byte-identical; Instruction-Priority is preserved
-but trimmed of non-Claude-Code filenames (GEMINI.md/AGENTS.md). Triggering behavior independently
-judged **preserved-and-improved**.
+```bash
+claude plugin marketplace add schatt93/superpowers-cc-extended
+claude plugin install superpowers-extended-cc@superpowers-cc-extended
+```
 
-> Counts are cl100k — a proxy whose **percentages are tokenizer-invariant** (absolute integers differ
-> on Claude). Recurring per-conversation saving = 406 (body) + 124 (descriptions) = **530 tok**; the
-> corpus total drops 535 tok (a near-coincidence, not the same quantity).
+Or in a session:
 
-## Added skills (from the Engineering Developer Guidebook)
+```
+/plugin marketplace add schatt93/superpowers-cc-extended
+/plugin install superpowers-extended-cc@superpowers-cc-extended
+```
 
-Eight new on-demand skills (+ 3 tier agents) + Tier-1 pointers, all validated (subagent RED→GREEN, disjoint triggering confirmed):
+> It keeps the plugin name `superpowers-extended-cc` (a drop-in replacement). If you already have the upstream plugin installed, uninstall it first to avoid a name clash.
 
-| Skill | Purpose |
+## Why this fork
+
+**1. Leaner always-on context.** Only one file is injected into *every* conversation (`using-superpowers`, via the SessionStart hook). It was rewritten **−31.2%** (cut Claude-Code-irrelevant multi-platform sections, flowchart→list) and the skill-registry descriptions were tightened — with **zero loss of Claude-Code behavior** (independently, adversarially audited; the discipline content is byte-identical).
+
+**2. New capabilities** (all on-demand — they cost nothing until invoked; each validated RED→GREEN):
+
+| Skill | What it does |
 |---|---|
-| `writing-tests` | The five-path coverage model (Happy/Bad/Bumpy/Chaos/Death), boundary-only mocking, no stubs/tautologies, mutation-strength bar |
-| `adversarial-audit` | Parallel red-team of a design/claim/product on non-overlapping, evidence-required attack lenses |
+| `writing-tests` | The five-path coverage model (Happy / Bad / Bumpy / Chaos / Death), boundary-only mocking, no stubs/tautologies, mutation-strength bar |
 | `e2e-testing` | Full-journey tests across real boundaries; five paths at system scale + load/soak/chaos + device matrix |
-| `concise-output` | Output-token discipline: results-first, structured-over-prose, capped/shaped subagent returns (~5x input price) |
-| `orchestration-routing` | Smart dispatch: pick execution shape (inline / agent / parallel / **Workflow**) + compute tier (model+effort) per task; routes to `sp-mechanical`/`sp-standard`/`sp-deep` agents |
-| `architecture-standards` | Org architecture (Guidebook A): UDF/BLoC, hexagonal/DDD/CQRS, saga/outbox/effectively-once, L4/L7/BGP, DLQ |
-| `delivery-standards` | Org delivery/ops (Guidebook B): blue-green/canary, OAuth2.1 token-exchange, RTO/RPO tiers + CAP, split-brain |
-| `compliance-standards` | Org compliance/supply-chain (Guidebook E): OPA policy-as-code, SBOM, Cosign signing/admission |
+| `adversarial-audit` | Parallel red-team of a design, claim, or finished product on non-overlapping, evidence-required attack lenses |
+| `concise-output` | Output-token discipline: results-first, structured-over-prose, capped/shaped subagent returns (~5× input price) |
+| `orchestration-routing` | Smart dispatch: pick execution shape (inline / agent / parallel / Workflow) + compute tier per task |
+| `architecture-standards` | Org architecture: UDF/BLoC, hexagonal/DDD/CQRS, saga+outbox/effectively-once, L4/L7/BGP, DLQ |
+| `delivery-standards` | Org delivery/ops: blue-green/canary, OAuth2.1 token-exchange, RTO/RPO tiers, split-brain |
+| `compliance-standards` | Org compliance/supply-chain: OPA policy-as-code, SBOM, Cosign signing + admission control |
 
-Tier-1 edits point `test-driven-development`, `verification-before-completion`, and `requesting-code-review` at these.
+**3. Auto model + effort routing.** Three tier agents — `sp-mechanical` (haiku/low), `sp-standard` (sonnet/medium), `sp-deep` (opus/high) — let `orchestration-routing` send each delegated task to the cheapest model+effort that can do it. (Main-loop thinking/effort stays user-controlled; the skill *advises*, it can't auto-set it.)
 
-**Always-on ledger:** Tier-0 + CSO −530; +195 (4 testing/output skills) +165 (orchestration-routing + 3 tier agents) +131 (3 standards skills) = **net −39 tok/conversation**. The original input win is now ~spent on capability (8 new skills + 3 agents) — near-neutral always-on, much broader capability; bodies stay on-demand (free until invoked).
+## Full skill set
 
-- **Output side:** `concise-output` — subagent-validated ~65% terser returns, substance intact.
-- **Smart dispatch:** `orchestration-routing` + `sp-mechanical`/`sp-standard`/`sp-deep` agents auto-route **model + effort + execution shape** (Workflow when warranted). Main-loop thinking/effort stays **user-only** — the skill advises `/effort`, it cannot auto-set it (hooks get it read-only). `effort:` frontmatter is doc-confirmed; live-verified on deploy.
+Inherited from upstream + the above. Grouped:
 
-## What changed (and why the rest didn't)
+- **Process:** `brainstorming`, `writing-plans`, `executing-plans`, `subagent-driven-development`, `dispatching-parallel-agents`, `orchestration-routing`
+- **Discipline:** `test-driven-development`, `writing-tests`, `e2e-testing`, `systematic-debugging`, `verification-before-completion`, `requesting-code-review`, `receiving-code-review`, `adversarial-audit`, `concise-output`
+- **Standards (org):** `architecture-standards`, `delivery-standards`, `compliance-standards`
+- **Lifecycle:** `using-git-worktrees`, `finishing-a-development-branch`, gate skills (`specifying-gates`, `checking-gates`)
+- **Meta:** `writing-skills`, `using-superpowers`
 
-An adversarial audit (4 agents) proved a full 16-skill rework was ROI-negative: only ONE file
-is force-loaded every conversation (`using-superpowers/SKILL.md`, via `hooks/session-start:18`);
-all other skills cost 0 tokens until invoked. So scope collapsed to the two surfaces that are
-actually always-on:
+## How it works
 
-1. **Tier-0** — rewrote `using-superpowers/SKILL.md`: cut CC-irrelevant multi-platform sections
-   + `references/` pointers; converted the 28-line graphviz flowchart to a numbered list
-   (every decision node preserved); kept all discipline content verbatim.
-2. **CSO** — rewrote 7 skill `description:` fields to remove the "summarize-the-workflow"
-   anti-pattern (which makes the model skip the skill body). Frontmatter only; no body edits.
+- **Always-on (every conversation):** the `using-superpowers` bootstrap + the skill *registry* (each skill's name + one-line description). This is what makes Claude *aware* of the skills and when to use them — so descriptions are kept tight.
+- **On-demand:** a skill's full body loads only when invoked via the `Skill` tool. Most of the framework costs **zero tokens** until used.
+- **Discovery:** Claude checks the registry on every task; the right skill triggers from its description. Skills cross-reference each other (`REQUIRED BACKGROUND:`) so invoking one surfaces related ones.
 
-Dropped as unsafe/ROI-negative: body-compressing the 15 on-demand skills, `shared/` de-dup
-(pointer-only, would add cost), deleting `gemini-tools.md` (live `@`-include in `GEMINI.md`).
+## Usage
 
-## Files
+Skills trigger automatically from their descriptions — start a task and the relevant discipline kicks in (e.g. "build X" → brainstorming → planning → TDD). You can also invoke any skill explicitly with the `Skill` tool / `/`-command. The `(org)` standards skills fire at design, release, and CI/supply-chain time; your project's `CLAUDE.md` always overrides them.
 
-- `plugin/` — the optimized plugin + 3 tier agents (git tag `pristine-baseline` = pristine copy; later commits = edits). History was scrubbed of node_modules + real email, so SHAs were rewritten — refs use the tag, not a SHA.
-- `measure.mjs` — token + lint harness. `node measure.mjs measure plugin <name> --force`, then
-  `node measure.mjs diff baseline <name>` (pass/fail vs pre-registered threshold).
-- `apply-cso.mjs` / `tokens-delta.mjs` — the CSO edit + its measurement.
-- `docs/2026-06-16-tier0-cso-optimization-design.md` — design & decision record.
-- `deploy.sh` — deploy **all changed skill/agent files** (auto-discovered from `git diff pristine-baseline HEAD`) into the live install. **Dry-run by default; pass `--apply`.** Backs up + overwrites only known-pristine files; creates new skills/agents if absent; auto-detects the active version.
-- `OUTPUT-LEVERS.md` / `MODEL-ROUTING.md` — output-token levers (ranked) + the model/effort routing + dispatch-guard analysis.
+## Development
 
-## Deploy later (3 paths — not mutually exclusive)
+This repo is also the optimization workspace:
 
-- **In-place:** `bash deploy.sh` (dry-run) then `bash deploy.sh --apply` → savings live next `/clear`. Wiped by `/plugin update`; just re-run.
-- **Fork:** push `plugin/` to a fork of pcvelz/superpowers, re-point the marketplace install.
-- **Upstream PR:** contribute to pcvelz/superpowers; you get it back via normal updates once merged.
+- `plugin/` — the installable plugin (skills, agents, hooks, commands).
+- `measure.mjs` — token + structural-lint harness. `node measure.mjs measure plugin <name>` then `node measure.mjs diff baseline <name>`.
+- `deploy.sh` — apply the optimized files into a live local install (dry-run by default; `--apply`).
+- `docs/`, `OUTPUT-LEVERS.md`, `MODEL-ROUTING.md` — design record, output-token levers, and model/effort routing notes.
+- Git tag `pristine-baseline` marks the unmodified upstream copy (history is scrubbed of build artifacts).
 
-> Note: a `~/.claude/skills` override does NOT work for the Tier-0 win — the SessionStart hook
-> reads the plugin's own file path, not the skills registry.
+## Credits & license
+
+Fork of [pcvelz/superpowers](https://github.com/pcvelz/superpowers), itself a fork of [obra/superpowers](https://github.com/obra/superpowers). MIT — see `plugin/LICENSE`.
