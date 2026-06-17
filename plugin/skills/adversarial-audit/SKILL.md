@@ -36,7 +36,7 @@ A single reviewer — especially the author — confirms; a red team falsifies. 
 
 ## Agent prompt template
 
-> You are an ADVERSARIAL auditor. Try to KILL [target] via the [lens] surface. Burden of proof is on the work. Inspect real files / run commands; cite evidence. Return ranked findings (kill/major/minor), each with evidence + a fix, then a one-line falsifiable verdict.
+> You are an ADVERSARIAL auditor. Try to KILL [target] via the [lens] surface. Burden of proof is on the work. Inspect real files / run commands; cite evidence. Return AT MOST [N] ranked findings (kill/major/minor) — each = one line + evidence ref + fix — then a one-line falsifiable verdict. No narration or preamble (superpowers-extended-cc:concise-output).
 
 ## Red Flags
 

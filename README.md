@@ -22,17 +22,18 @@ judged **preserved-and-improved**.
 
 ## Added skills (from the Engineering Developer Guidebook)
 
-Three new on-demand skills + Tier-1 pointers, all Iron-Law validated (subagent RED→GREEN, disjoint triggering confirmed):
+Four new on-demand skills + Tier-1 pointers, all validated (subagent RED→GREEN, disjoint triggering confirmed):
 
 | Skill | Purpose |
 |---|---|
 | `writing-tests` | The five-path coverage model (Happy/Bad/Bumpy/Chaos/Death), boundary-only mocking, no stubs/tautologies, mutation-strength bar |
 | `adversarial-audit` | Parallel red-team of a design/claim/product on non-overlapping, evidence-required attack lenses |
 | `e2e-testing` | Full-journey tests across real boundaries; five paths at system scale + load/soak/chaos + device matrix |
+| `concise-output` | Output-token discipline: results-first, structured-over-prose, capped/shaped subagent returns (~5x input price) |
 
 Tier-1 edits point `test-driven-development`, `verification-before-completion`, and `requesting-code-review` at these.
 
-**Always-on ledger:** Tier-0 + CSO = −530 tok; +153 tok for the 3 new descriptions = **net −377 tok/conversation**. The new skill bodies (~2,760 tok) are on-demand only.
+**Always-on ledger:** Tier-0 + CSO = −530 tok; +195 tok for the 4 new descriptions = **net −335 tok/conversation**. New skill bodies are on-demand only. **Output side:** `concise-output` cuts *generated* tokens — subagent-validated ~65% on a sample task, substance intact.
 
 ## What changed (and why the rest didn't)
 

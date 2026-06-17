@@ -13,6 +13,8 @@ When you have multiple unrelated failures (different test files, different subsy
 
 **Core principle:** Dispatch one agent per independent problem domain. Let them work concurrently.
 
+**Constrain each agent's RETURN** (superpowers-extended-cc:concise-output) — a subagent's output is output-token cost paid by you. Specify a cap + shape: ranked findings, max N, severity + one line + evidence ref, no narration.
+
 ## When to Use
 
 ```dot
