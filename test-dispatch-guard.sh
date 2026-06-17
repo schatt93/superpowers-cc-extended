@@ -5,7 +5,7 @@
 #   exit 0 = ALLOW dispatch, exit 2 = BLOCK dispatch.
 set -uo pipefail
 
-HOOK="/c/Work_Projects/superpowers-optimization/plugin/hooks/examples/pre-agent-task-dispatch-validate.sh"
+HOOK="$(cd "$(dirname "$0")" && pwd)/plugin/hooks/examples/pre-agent-task-dispatch-validate.sh"
 WORK="$(mktemp -d)"; trap 'rm -rf "$WORK"' EXIT
 PASS=0; FAIL=0; FINDINGS=()
 
