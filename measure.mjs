@@ -49,7 +49,9 @@ export const isSubsequence = (needle, hay) => {
 // the fork's ONE sanctioned global transform on inherited bodies (see bodyIntegrity)
 export const normalizeRebrand = (t) => t.replace(/superpowers:/g, "superpowers-extended-cc:");
 function gitShow(ref, path) {
-  try { return execFileSync("git", ["show", `${ref}:${path}`], { encoding: "utf8" }); }
+  // stdio: ignore the child's stderr so git's expected "fatal: path ... not in <ref>" message for a
+  // new-since-baseline file does not leak to the console / CI logs. stdout is still piped and returned.
+  try { return execFileSync("git", ["show", `${ref}:${path}`], { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }); }
   catch { return null; } // absent at baseline (new file) => no preservation obligation
 }
 // Returns { checked, violations: [rel...] }, or null if the baseline ref is unavailable.
