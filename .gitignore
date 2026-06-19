@@ -3,3 +3,4 @@ reports/post*.json
 reports/current.json
 reports/fresh.json
 backups/
+*.code-workspace

@@ -51,6 +51,9 @@ jobs:
       - name: Model-routing dispatch guard (exit 0 allow / 2 block)
         run: bash test-dispatch-guard.sh
 
+      - name: deploy.sh safety (fixture install — dry-run writes nothing, won't clobber upstream)
+        run: bash test/deploy.test.sh
+
       - name: SessionStart hook emits valid JSON
         run: |
           CLAUDE_PLUGIN_ROOT="$PWD/plugin" bash plugin/hooks/session-start | jq empty
